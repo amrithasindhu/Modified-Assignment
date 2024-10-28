@@ -1,0 +1,38 @@
+body {
+    background-color: #f8f9fa; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+}
+
+.registrationform {
+    background-color: #ffffff; 
+    padding: 30px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    width: 100%; 
+    max-width: 400px;
+    margin: 50px auto; 
+}
+
+.registrationform h2 {
+    margin-bottom: 20px; 
+    text-align: center; 
+}
+
+.form-control {
+    margin-bottom: 20px;
+}
+
+.btn-register {
+    width: 100%;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+}
+
+.btn-register:hover {
+    background-color: #0056b3;
+}
