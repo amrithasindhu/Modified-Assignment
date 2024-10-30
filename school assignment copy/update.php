@@ -3,21 +3,6 @@
 require_once("dbcon.php"); 
 require_once("student.php");
 
-class incorrectvalues extends Exception {
-    public function agecheck() {
-        return 'Enter the age between 0 and 120. Also, the age should be a number';
-    }
-    public function classcheck() {
-        return 'Enter the class';
-    }
-    public function emailcheck() {
-        return 'Enter a valid email ID';
-    }
-    public function namecheck() {
-        return 'Enter a valid name';
-    }
-}
-
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['update_student'])) {
 
     $age = $_POST["age"];
@@ -83,7 +68,7 @@ return ;
             header("Location: mainpage.php?error=update");
             exit();
         }
-    } catch (incorrectvalues $e) {
+    } catch (Exception $e) {
         echo $e->getMessage() . '<br>';
     } catch (Exception $e) {
         echo 'An unexpected error occurred: ' . $e->getMessage();

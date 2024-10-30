@@ -23,10 +23,10 @@ if ($query->rowCount() == 1) {
 
  
     if ((password_verify($password, $user['password'])) && $user['user_type'] =='student' ) {
-        header("Location: studentview.php");
+        header("Location: mainpage.php ");
         exit();
     } elseif  ((password_verify($password, $user['password'])) && $user['user_type'] =='admin' ) {
-        header("Location: mainpage.php");
+        header("Location: mainpage.php ?user_type=admin");
         exit();
     }
  

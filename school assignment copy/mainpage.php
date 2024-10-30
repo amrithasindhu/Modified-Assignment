@@ -5,12 +5,14 @@ include("dbcon.php");
 include("student.php");
 $studentObj = new Graduation();
 $students = $studentObj->getStudents();
-
+$isAdmin = isset($_GET['user_type']) && $_GET['user_type'] === 'admin';
 ?>
 <div class="box1">
+<?php if ($isAdmin): ?>
 <button type="button" class="btn btn-primary" data-bs-toggle ="modal" data-bs-target="#exampleModal">
 Add Students
 </button>
+<?php endif; ?>
 
 <form action="search.php" method="POST">
 <label for="search"></label>
@@ -32,12 +34,14 @@ Add Students
             <th>class</th>
             <th>Email</th>
             <th>Graduation Year</th>
+            <?php if($isAdmin):?>
             <th>Update</th>
             <th>Delete</th>
+            <?php endif; ?>
          
 
 
-            </tr>
+          
     
         </tr>
         </thead>
@@ -54,10 +58,11 @@ Add Students
 
                 
                     <td>
-                       
+                    <?php if ($isAdmin): ?>
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#updateModal<?php echo $student['id']; ?>">
                                 Update
                             </button>
+                            <?php endif; ?>
                             <div class="modal fade" id="updateModal<?php echo $student['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel<?php echo $student['id']; ?>" aria-hidden="true">
                                 <div class="modal-dialog" role="document">
                                     <form action="update.php" method="POST">
@@ -99,7 +104,7 @@ Add Students
                                                 </div>
                                                 <div class="form-group mb-3">
     <label for="graduation_year<?php echo $student['id']; ?>">Graduation Year</label>
-    <input type="number" name="graduation_year" class="form-control" placeholder="Graduation Year" value="<?php echo htmlspecialchars($student['graduation_year']); ?>">
+    <input type="text" name="graduation_year" class="form-control" placeholder="Graduation Year" value="<?php echo htmlspecialchars($student['graduation_year']); ?>">
 </div>
 
 
@@ -121,10 +126,12 @@ Add Students
 
                     </td>
                     <td>
+                    <?php if ($isAdmin): ?>
                     <form action="delete.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this student?');">
                                 <input type="hidden" name="id" value="<?php echo $student['id']; ?>">
                                 <input type="submit" class="btn btn-danger" name="delete_student" value="Delete">
-                            </form> 
+                            </form>
+                            <?php endif; ?> 
                             </button>
                     </td>
                 </tr>
@@ -138,9 +145,9 @@ Add Students
 
         </tbody>
         </table>
-     
+        <?php if ($isAdmin): ?>
         <form  action="insert_data.php" method="POST">
-
+        <?php endif; ?> 
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <form action="insert.php" method="POST">
@@ -172,7 +179,7 @@ Add Students
 
           <div class="form-group mb-3">
     <label for="graduation_year">Graduation Year</label>
-    <input type="number" name="graduation_year" class="form-control" placeholder="Graduation Year" >
+    <input type="text" name="graduation_year" class="form-control" placeholder="Graduation Year" >
 </div>
 
         </div>

@@ -1,12 +1,12 @@
 <?php
     require_once 'dbcon.php';
 class Student extends Database{
-    private $name;
-    private $age;
-    private $class;
-    private $email;
+    protected $name;
+    protected $age;
+    protected $class;
+    protected $email;
 
-    private $conn;
+    protected $conn;
 
     public function __construct($name=null, $age=null, $class=null,$email=null)
     {
@@ -66,6 +66,7 @@ public function searchStudent($search) {
               OR `class` = :class 
               OR `email` LIKE :email 
               OR `age` = :age";
+     
     
     $stmt = $this->conn->prepare($query);
 
@@ -84,6 +85,7 @@ public function searchStudent($search) {
     $stmt->bindValue(':name', $searchTerm);
     $stmt->bindValue(':class', $search); 
     $stmt->bindValue(':email', $searchTerm);
+ 
 
     $stmt->execute();
 
@@ -94,20 +96,12 @@ public function searchStudent($search) {
 }
 
 class Graduation extends Student {
-    private $name;
-    private $age;
-    private $class;
-    private $email;
+  
+
     private $graduation_year; 
 
-    private $conn;
-
     public function __construct($name = null, $age = null, $class = null, $email = null, $graduation_year = null) {
-        $this->conn = $this->connect();
-        $this->name = $name;
-        $this->age = $age;
-        $this->class = $class;
-        $this->email = $email;
+        parent::__construct($name, $age, $class, $email);
         $this->graduation_year = $graduation_year; 
     }
     public function getStudents(){
@@ -129,7 +123,7 @@ class Graduation extends Student {
         $stmt->bindParam(":age", $this->age, PDO::PARAM_INT);
         $stmt->bindParam(":class", $this->class);
         $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":graduation_year", $this->graduation_year, PDO::PARAM_INT);
+        $stmt->bindParam(":graduation_year", $this->graduation_year);
 
         return $stmt->execute();
     }
@@ -143,7 +137,7 @@ class Graduation extends Student {
         $stmt->bindParam(":age", $this->age, PDO::PARAM_INT);
         $stmt->bindParam(":class", $this->class);
         $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":graduation_year", $this->graduation_year, PDO::PARAM_INT); 
+        $stmt->bindParam(":graduation_year", $this->graduation_year); 
 
         return $stmt->execute();
     }

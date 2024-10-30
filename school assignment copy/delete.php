@@ -5,10 +5,7 @@ require_once("student.php");
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['delete_student'])) {
     $id = $_POST['id'] ?? null;
 
-    if (empty($id) || !filter_var($id, FILTER_VALIDATE_INT)) {
-        header("Location: index.php?error=delete");
-        exit();
-    }
+   
 
 
     $studentObj = new Student();

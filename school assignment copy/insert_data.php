@@ -3,20 +3,7 @@
 require_once("dbcon.php"); 
 require_once("student.php");
 
-class incorrectvalues extends Exception {
-    public function agecheck() {
-        return 'Enter the age between 0 and 120. Also, the age should be a number';
-    }
-    public function classcheck() {
-        return 'Enter the class';
-    }
-    public function emailcheck() {
-        return 'Enter a valid email ID';
-    }
-    public function namecheck() {
-        return 'Enter a valid name';
-    }
-}
+
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['add_students'])) {
     $age = $_POST["age"];
     $email = $_POST["email"];
@@ -57,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['add_students'])) {
         }
 
         if (!empty($errors)) {
-            echo '<script>alert("' . htmlspecialchars(implode('\\n', $errors)) . '");
+            echo '<script>alert("' . htmlspecialchars(implode( $errors)) . '");
             window.history.back();
             </script>';
 

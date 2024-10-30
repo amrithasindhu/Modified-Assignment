@@ -3,7 +3,7 @@
 include("header.php");
 include("dbcon.php");
 include("student.php");
-$studentObj = new Student();
+$studentObj = new Graduation();
 $students = $studentObj->getStudents();
 
 ?>
