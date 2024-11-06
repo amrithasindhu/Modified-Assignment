@@ -1,149 +1,128 @@
 <?php
-    require_once 'dbcon.php';
-class Student extends Database{
-    protected $name;
-    protected $age;
-    protected $class;
-    protected $email;
+require_once 'dbcon.php';
+class Student extends Database
+{
+    protected $tableName = "students";
 
-    protected $conn;
 
-    public function __construct($name=null, $age=null, $class=null,$email=null)
+
+
+
+    public function deleteStudent($tablename, $id)
     {
-        $this->conn=$this->connect();
-        $this->name=$name;
-        $this->age=$age;
-        $this->class=$class;
-        $this->email=$email;
-    
+        $query = "DELETE  FROM $tablename WHERE `id`=:id";
+        $stmt = $this->connect()->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
-}
-
-
-
-// public function getStudents(){
-//     $query= "SELECT * FROM `students`";
-//     $stmt=$this->conn->prepare($query);
-//     if($stmt->execute()){
-//         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-//     }
-//     else{
-//         return false;
-//     }
-
-// }
-
-public function getStudent($id){
-    $query= "SELECT * FROM `students` WHERE `id`=:id";
-    $stmt=$this->conn->prepare($query);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    if($stmt->execute()){
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-    else{
-        return false;
+        return $stmt->execute();
     }
 
 
-}
+    public function searchStudent($tablename, $filters)
+    {
+        // if(!preg_match('/[^a-zA-Z0-9_]/',$tablename))
+        // {
+        //  throw new Exception("Invalid table name");
+        // }
+
+        if (!empty($filters)) {
+            $columns = [];
+            $params = [];
+
+            foreach ($filters as $field => $value) {
+                if (!preg_match('/^[a-zA-Z0-9_]+$/', $field)) {
+                    throw new exception("Invalid column name:$field");
+                }
+
+                if (is_string($value)) {
+                    $columns[] = "'$field' LIKE :$field";
+                    $params[":field"] = "%$value%";
+                } else {
+                    $columns[] = "'$field' = :$field";
+                    $params[":field"] = $value;
+                }
+            }
+            $columnlist = implode(',', $columns);
+            $query = "SELECT $columnlist FROM '$tablename'";
+
+            $stmt = $this->connect()->prepare($query);
 
 
+            $stmt->execute();
 
-public function deleteStudent($id){
-    $query="DELETE  FROM students  WHERE `id`=:id";
-    $stmt=$this->conn->prepare($query);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-    return $stmt->execute();
-  
-}
-
-
-
-public function searchStudent($search) {
-    $query = "SELECT * FROM `students` 
-              WHERE `name` LIKE :name
-              OR `class` = :class 
-              OR `email` LIKE :email 
-              OR `age` = :age";
-     
-    
-    $stmt = $this->conn->prepare($query);
-
-  
-    $searchTerm = "%" . $search . "%";
-
-    if (is_numeric($search)) {
-
-        $stmt->bindValue(':age', (int)$search, PDO::PARAM_INT);
-    } else {
-    
-        $stmt->bindValue(':age', null, PDO::PARAM_NULL);
-    }
-
-  
-    $stmt->bindValue(':name', $searchTerm);
-    $stmt->bindValue(':class', $search); 
-    $stmt->bindValue(':email', $searchTerm);
- 
-
-    $stmt->execute();
-
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-
-}
-
-class Graduation extends Student {
-  
-
-    private $graduation_year; 
-
-    public function __construct($name = null, $age = null, $class = null, $email = null, $graduation_year = null) {
-        parent::__construct($name, $age, $class, $email);
-        $this->graduation_year = $graduation_year; 
-    }
-    public function getStudents(){
-        $query= "SELECT * FROM `students`";
-        $stmt=$this->conn->prepare($query);
-        if($stmt->execute()){
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
-        else{
+    }
+}
+
+class Graduation extends Student
+{
+
+
+
+
+
+    public function getStudents($tablename, $columns = '*')
+    {
+
+        if ($columns !== '*') {
+            
+            $columns = implode(', ', array_map(function ($col) {
+                return preg_replace('/[^a-zA-Z0-9_]/', '', $col);
+            }, (array) $columns));
+        }
+        $query = "SELECT $columns FROM $tablename";
+        $stmt = $this->connect()->prepare($query);
+        if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
             return false;
         }
-    
     }
 
-    public function addstudents() {
-        $query = "INSERT INTO `students`(name, age, class, email, graduation_year) VALUES(:name, :age, :class, :email, :graduation_year)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":age", $this->age, PDO::PARAM_INT);
-        $stmt->bindParam(":class", $this->class);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":graduation_year", $this->graduation_year);
+    public function addstudents($tablename, $data)
+    {
+
+///Change to array_key,array_values
+        if (!empty($data)) {
+            $field_name = $placeholder = [];
+            foreach ($data as $field => $value) {
+                $field_name[] = $field;
+                $placeholder[] = " :{$field}";
+            }
+        }
+        $query = "INSERT INTO $tablename (" . implode(',', $field_name) . ") VALUES (" . implode(',', $placeholder) . ")";
+        $stmt = $this->connect()->prepare($query);
+
+        foreach ($data as $field => $value) {
+            $stmt->bindParam(":{$field}", $data[$field]);
+        }
 
         return $stmt->execute();
     }
 
 
-    public function updateStudents($id) {
-        $query = "UPDATE `students` SET `name` = :name, `age` = :age, `class` = :class, `email` = :email, `graduation_year` = :graduation_year WHERE `id` = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":age", $this->age, PDO::PARAM_INT);
-        $stmt->bindParam(":class", $this->class);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":graduation_year", $this->graduation_year); 
+    public function updateStudents($tablename, $data, $id)
+    {
 
-        return $stmt->execute();
+        if (!empty($data)) {
+            $field_name = [];
+            foreach ($data as $field => $value) {
+                $field_name[] = "{$field} = :{$field}";
+            }
+
+            $query = "UPDATE $tablename SET " . implode(',', $field_name) . " WHERE `id` = :id";
+            $stmt = $this->connect()->prepare($query);
+            foreach ($data as $field => $value) {
+                $stmt->bindParam(":{$field}", $data[$field]);
+            }
+            $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
+            return $stmt->execute();
+        }
+        return false;
     }
-
-   
 }
 
 
-?>	
+?>	  

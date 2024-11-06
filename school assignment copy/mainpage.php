@@ -4,7 +4,7 @@ include("header.php");
 include("dbcon.php");
 include("student.php");
 $studentObj = new Graduation();
-$students = $studentObj->getStudents();
+$students = $studentObj->getStudents( 'students');
 $isAdmin = isset($_GET['user_type']) && $_GET['user_type'] === 'admin';
 ?>
 <div class="box1">

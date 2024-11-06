@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['delete_student'])) {
 
 
     $studentObj = new Student();
-    if ($studentObj->deleteStudent($id)) {
+    if ($studentObj->deleteStudent('students',$id)) {
         header("Location: mainpage.php?success=deleted");
         exit();
     } else {

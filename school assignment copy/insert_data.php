@@ -5,11 +5,16 @@ require_once("student.php");
 
 
 if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['add_students'])) {
+
+    
+        $name = $_POST["name"];
     $age = $_POST["age"];
-    $email = $_POST["email"];
-    $name = $_POST["name"];
     $class = $_POST['class'];
+    $email = $_POST["email"];
+ 
+ 
     $graduation_year = $_POST['graduation_year'];
+    
 
     $errors = [];  
 
@@ -51,9 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['add_students'])) {
             return;  
         }
 
- 
+        $data = [
+            'name' => $studentname, 
+            'age' => $studentage,
+            'class' => $studentclass, 
+            'email' => $studentemail,
+            'graduation_year' => $graduation_year,
+        ];
         $studentObj = new Graduation($studentname, $studentage, $studentclass, $studentemail, $graduation_year);
-        if ($studentObj->addstudents()) {
+        if ($studentObj->addstudents('students',$data)) {
             header("Location: mainpage.php?success=1");
             exit();
         } else {

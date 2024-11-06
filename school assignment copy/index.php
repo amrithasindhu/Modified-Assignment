@@ -2,14 +2,14 @@
 require_once('dbcon.php'); 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
+$data=[
+    $name = $_POST['name'],
+    $email = $_POST['email'],
+    $password = $_POST['password'],
+    $cpassword = $_POST['cpassword'],
+    $user_type = $_POST['user_type'],
 
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $cpassword = $_POST['cpassword'];
-    $user_type = $_POST['user_type'];
-
-    
+];
     if ($password != $cpassword) {
         
         echo "<script> alert('Passwords do not match!');

@@ -25,12 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['update_student'])) {
    
     try {
       
-        if (!filter_var($age, FILTER_VALIDATE_INT, array("options" => array("min_range" => 0, "max_range" => 120)))) {
-            $errors[] = 'Enter a valid age between 0 and 120.';
-        } else {
-            $studentage = $age;
-        }
-
+      
         
         if (empty($class)) {
             $errors[] = 'Enter the class.';
@@ -60,8 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['update_student'])) {
 return ;
         }
 
+        $data = [
+            'name' => $studentname, 
+            'age' => $age,
+            'class' => $studentclass, 
+            'email' => $studentemail,
+            'graduation_year' => $graduation_year,
+        ];
         $studentObj = new Graduation($studentname, $studentage, $studentclass, $studentemail,$graduation_year);
-        if ($studentObj->updateStudents($id)) {
+        if ($studentObj->updateStudents('students',$data,$id)) {
             header("Location: mainpage.php?success=updated");
             exit();
         } else {

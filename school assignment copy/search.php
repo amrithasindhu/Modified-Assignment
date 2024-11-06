@@ -18,7 +18,7 @@
   $student = new Student();
 
     
-        $results = $student->searchStudent($searchInput);
+        $results = $student->searchStudent('students',$searchInput);
 
       
         echo $results ? "<h2>Search Results:</h2>" : "<p>No students found matching your search.</p>";
